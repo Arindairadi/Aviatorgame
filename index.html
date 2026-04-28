@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aviator  - Developed by Iradi</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #1e293b, #020617 70%);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 950px;
+      background: rgba(2, 6, 23, 0.96);
+      border: 1px solid #1e293b;
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+    }
+
+    .topbar {
+      padding: 20px 24px;
+      background: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .brand h1 {
+      font-size: 26px;
+      color: #f97316;
+    }
+
+    .brand p {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+
+    .balance {
+      background: linear-gradient(135deg, #065f46, #047857);
+      padding: 12px 18px;
+      border-radius: 30px;
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba(34, 197, 94, 0.2);
+    }
+
+    .game-area {
+      padding: 28px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+    }
+
+    .circle-card {
+      background: radial-gradient(circle at center, #111827, #020617 75%);
+      border: 1px solid #1e293b;
+      border-radius: 26px;
+      min-height: 470px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .circle {
+      width: 330px;
+      height: 330px;
+      border-radius: 50%;
+      border: 8px solid rgba(249, 115, 22, 0.15);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 0 0 25px rgba(249, 115, 22, 0.04),
+        inset 0 0 50px rgba(249, 115, 22, 0.08);
+    }
+
+    .circle::before {
+      content: "";
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 8px solid transparent;
+      border-top-color: #f97316;
+      border-right-color: #22c55e;
+      animation: rotateRing 4s linear infinite;
+    }
+
+    @keyframes rotateRing {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .orbit {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      transform: rotate(0deg);
+      transition: transform 0.08s linear;
+    }
+
+    .plane {
+      position: absolute;
+      top: -28px;
+      left: 50%;
+      transform: translateX(-50%) rotate(90deg);
+      font-size: 48px;
+      filter: drop-shadow(0 10px 15px rgba(249, 115, 22, 0.4));
+    }
+
+    .center-info {
+      text-align: center;
+      z-index: 5;
+      padding: 20px;
+    }
+
+    .multiplier {
+      font-size: 64px;
+      font-weight: 900;
+      color: #22c55e;
+      text-shadow: 0 0 30px rgba(34, 197, 94, 0.4);
+    }
+
+    .status {
+      margin-top: 8px;
+      color: #cbd5e1;
+      font-size: 18px;
+    }
+
+    .developer {
+      margin-top: 18px;
+      font-size: 13px;
+      color: #f97316;
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.25);
+      padding: 8px 14px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+
+    .crashed {
+      color: #ef4444 !important;
+      text-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
+    }
+
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .panel {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .panel h2 {
+      font-size: 18px;
+      margin-bottom: 14px;
+      color: #f97316;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      color: #94a3b8;
+      margin-bottom: 7px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #334155;
+      background: #020617;
+      color: #fff;
+      border-radius: 12px;
+      outline: none;
+      font-size: 16px;
+      margin-bottom: 14px;
+    }
+
+    input:focus {
+      border-color: #f97316;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.25s;
+      margin-top: 8px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:disabled {
+      background: #475569 !important;
+      color: #94a3b8 !important;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .bet-btn {
+      background: #22c55e;
+      color: #022c22;
+    }
+
+    .cash-btn {
+      background: #f97316;
+      color: white;
+    }
+
+    .reset-btn {
+      background: #334155;
+      color: white;
+    }
+
+    .message {
+      line-height: 1.5;
+      color: #cbd5e1;
+      font-size: 14px;
+      min-height: 65px;
+    }
+
+    .history-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .history-item {
+      background: #020617;
+      border: 1px solid #1e293b;
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 15px;
+      color: #64748b;
+      font-size: 13px;
+      border-top: 1px solid #1e293b;
+      background: #020617;
+    }
+
+    @media (max-width: 850px) {
+      .game-area {
+        grid-template-columns: 1fr;
+      }
+
+      .circle-card {
+        min-height: 390px;
+      }
+
+      .circle {
+        width: 270px;
+        height: 270px;
+      }
+
+      .multiplier {
+        font-size: 48px;
+      }
+
+      .plane {
+        font-size: 40px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <h1> Aviator </h1>
+        <p>Virtual coins only built for learning and demonstration especially to umiversity students who don't chase ladies</p>
+      </div>
+
+      <div class="balance">
+        Balance: <span id="balance">10000</span> Coins
+      </div>
+    </div>
+
+    <div class="game-area">
+      <div class="circle-card">
+        <div class="circle">
+          <div class="orbit" id="orbit">
+            <div class="plane">✈️</div>
+          </div>
+
+          <div class="center-info">
+            <div class="multiplier" id="multiplier">1.00x</div>
+            <div class="status" id="status">Place your bet</div>
+            <div class="developer">Developed by Iradi</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-panel">
+        <div class="panel">
+          <h2>Place Virtual Bet</h2>
+
+          <label for="betAmount">Bet Amount</label>
+          <input type="number" id="betAmount" value="100" min="10" />
+
+          <label for="autoCashout">Auto Cashout</label>
+          <input type="number" id="autoCashout" value="2.00" step="0.10" min="1.10" />
+
+          <button class="bet-btn" id="betBtn" onclick="placeBet()">Place Bet</button>
+          <button class="cash-btn" id="cashoutBtn" onclick="cashOut()" disabled>Cash Out</button>
+          <button class="reset-btn" onclick="resetBalance()">Reset Balance</button>
+        </div>
+
+        <div class="panel">
+          <h2>Game Message</h2>
+          <div class="message" id="message">
+            This is a demo Aviator style game using virtual coins only. No real money is involved.
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Round History</h2>
+          <div class="history-list" id="historyList"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Aviator  • Developed by Iradi • For single university studies
+    </div>
+  </div>
+
+  <script>
+    let balance = 10000;
+    let currentMultiplier = 1.00;
+    let crashPoint = 0;
+    let betAmount = 0;
+    let gameRunning = false;
+    let cashedOut = false;
+    let gameInterval = null;
+    let rotation = 0;
+
+    const balanceEl = document.getElementById("balance");
+    const multiplierEl = document.getElementById("multiplier");
+    const statusEl = document.getElementById("status");
+    const messageEl = document.getElementById("message");
+    const historyList = document.getElementById("historyList");
+    const orbitEl = document.getElementById("orbit");
+    const betBtn = document.getElementById("betBtn");
+    const cashoutBtn = document.getElementById("cashoutBtn");
+
+    function updateBalance() {
+      balanceEl.textContent = balance.toFixed(0);
+    }
+
+    function generateCrashPoint() {
+      /*
+        Demo crash algorithm.
+        This creates many low results and fewer high results.
+        It is for virtual coins only, not real gambling.
+      */
+
+      const random = Math.random();
+
+      if (random < 0.08) {
+        return 1.00;
+      }
+
+      const demoRTP = 0.97;
+      let crash = demoRTP / (1 - random);
+
+      crash = Math.min(crash, 50);
+
+      return parseFloat(crash.toFixed(2));
+    }
+
+    function placeBet() {
+      if (gameRunning) return;
+
+      betAmount = parseFloat(document.getElementById("betAmount").value);
+      const autoCashout = parseFloat(document.getElementById("autoCashout").value);
+
+      if (isNaN(betAmount) || betAmount <= 0) {
+        messageEl.textContent = "Enter a valid bet amount.";
+        return;
+      }
+
+      if (betAmount > balance) {
+        messageEl.textContent = "You do not have enough virtual coins.";
+        return;
+      }
+
+      if (isNaN(autoCashout) || autoCashout < 1.10) {
+        messageEl.textContent = "Auto cashout must be at least 1.10x.";
+        return;
+      }
+
+      balance -= betAmount;
+      updateBalance();
+
+      currentMultiplier = 1.00;
+      crashPoint = generateCrashPoint();
+      gameRunning = true;
+      cashedOut = false;
+      rotation = 0;
+
+      multiplierEl.classList.remove("crashed");
+      multiplierEl.textContent = "1.00x";
+      statusEl.textContent = "Flying...";
+      messageEl.textContent = "Round started. Cash out before the plane flies away.";
+
+      betBtn.disabled = true;
+      cashoutBtn.disabled = false;
+
+      gameInterval = setInterval(() => {
+        currentMultiplier += 0.01 + currentMultiplier * 0.004;
+        currentMultiplier = parseFloat(currentMultiplier.toFixed(2));
+
+        rotation += 4 + currentMultiplier * 0.4;
+        orbitEl.style.transform = `rotate(${rotation}deg)`;
+
+        multiplierEl.textContent = currentMultiplier.toFixed(2) + "x";
+
+        if (!cashedOut && currentMultiplier >= autoCashout) {
+          cashOut(true);
+        }
+
+        if (currentMultiplier >= crashPoint) {
+          crashGame();
+        }
+      }, 70);
+    }
+
+    function cashOut(auto = false) {
+      if (!gameRunning || cashedOut) return;
+
+      const winnings = betAmount * currentMultiplier;
+      balance += winnings;
+      updateBalance();
+
+      cashedOut = true;
+      cashoutBtn.disabled = true;
+      statusEl.textContent = "Cashed out!";
+
+      messageEl.textContent = auto
+        ? `Auto cashout at ${currentMultiplier.toFixed(2)}x. You won ${winnings.toFixed(0)} coins.`
+        : `You cashed out at ${currentMultiplier.toFixed(2)}x. You won ${winnings.toFixed(0)} coins.`;
+    }
+
+    function crashGame() {
+      clearInterval(gameInterval);
+
+      gameRunning = false;
+      betBtn.disabled = false;
+      cashoutBtn.disabled = true;
+
+      multiplierEl.classList.add("crashed");
+      multiplierEl.textContent = crashPoint.toFixed(2) + "x";
+      statusEl.textContent = "Crashed!";
+
+      if (!cashedOut) {
+        messageEl.textContent = `You lost ${betAmount.toFixed(0)} coins. Crash point was ${crashPoint.toFixed(2)}x.`;
+      }
+
+      addHistory(crashPoint);
+
+      setTimeout(() => {
+        currentMultiplier = 1.00;
+        multiplierEl.classList.remove("crashed");
+        multiplierEl.textContent = "1.00x";
+        statusEl.textContent = "Place your bet";
+        orbitEl.style.transform = "rotate(0deg)";
+      }, 1800);
+    }
+
+    function addHistory(value) {
+      const item = document.createElement("div");
+      item.className = "history-item";
+      item.textContent = value.toFixed(2) + "x";
+
+      if (value < 2) {
+        item.style.color = "#ef4444";
+      } else if (value < 5) {
+        item.style.color = "#22c55e";
+      } else {
+        item.style.color = "#f97316";
+      }
+
+      historyList.prepend(item);
+
+      if (historyList.children.length > 15) {
+        historyList.removeChild(historyList.lastChild);
+      }
+    }
+
+    function resetBalance() {
+      if (gameRunning) {
+        messageEl.textContent = "You cannot reset while a round is running.";
+        return;
+      }
+
+      balance = 10000;
+      updateBalance();
+      messageEl.textContent = "Virtual balance has been reset to 10,000 coins.";
+    }
+
+    updateBalance();
+  </script>
+
+</body>
+</html>
